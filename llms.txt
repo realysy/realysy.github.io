@@ -11,15 +11,15 @@
   - Kitty (Linux)
 - **System Terminal Support**: Also supports Windows Terminal, GNOME Terminal, KDE Konsole, and iTerm2.
 - **High Performance**: Built with Python Flask and compiled via Nuitka into a portable binary. Memory usage is extremely low, comparable to native C++ applications, avoiding the heavy footprint of Electron apps.
+- **Data Safety**: Fully offline-capable. No internet required, no risk of leaking SSH credentials, IPs, or other sensitive information.
 
-## Platform Support
+## Cross-Platform Support
 - **x86_64**: Windows 10+, Linux (glibc 2.31+ like Ubuntu 20.04/Debian 11), macOS 11+
 - **arm64**: macOS (Apple Silicon)
 
 ## Pricing & Availability
-- Available for purchase via the software's main interface (Activation button -> Scan QR code).
-- Also available on itch.io and Taobao (for mainland China users).
-- Closed-source portable application.
+- Supported payment methods: Paypal, Credit Card & Debit Card for international users, and Taobao/Alipay mainland China users.
+- You can purchase via the software's Main interface -> Activation button -> Scan QR code.
 
 ## Official Links
 - [Github Repo Release to download](https://github.com/realysy/ssh-config-manager-artifact/releases)
