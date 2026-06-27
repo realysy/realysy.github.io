@@ -1,0 +1,118 @@
+# ==========================================
+# 🌍 全局默认规则：向全世界敞开大门
+# ==========================================
+User-agent: *
+Allow: /
+# 屏蔽纯静态构建产物和配置文件，节省爬虫算力
+Disallow: /_astro/
+Disallow: /config.js
+
+# ==========================================
+# 🌟 海外 AI 巨头 & 大模型训练爬虫 (显式欢迎)
+# ==========================================
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Google-CloudVertexBot
+Allow: /
+User-agent: GoogleOther
+Allow: /
+User-agent: Meta-ExternalAgent
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: DuckAssistBot
+Allow: /
+User-agent: cohere-ai
+Allow: /
+User-agent: YouBot
+Allow: /
+
+# ==========================================
+# 🔥 新兴 AI 搜索引擎 (高转化率，必须拿下)
+# ==========================================
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# ==========================================
+# 🇨🇳 国内大模型 & 科技巨头 (AI 联网搜索主力)
+# ==========================================
+# 字节系 (豆包 / 扣子 / TikTok)
+User-agent: Bytespider
+Allow: /
+User-agent: TikTokSpider
+Allow: /
+User-agent: Doubao
+Allow: /
+
+# 百度 (文心一言)
+User-agent: Baiduspider
+Allow: /
+
+# 腾讯 (混元 / 搜狗)
+User-agent: Sogou web spider
+Allow: /
+
+# 360 (360智脑)
+User-agent: 360Spider
+Allow: /
+
+# 华为 (盘古)
+User-agent: PetalBot
+Allow: /
+
+# 月之暗面 (Kimi 联网搜索)
+User-agent: KimiBot
+Allow: /
+
+# DeepSeek (联网搜索)
+User-agent: DeepSearch
+Allow: /
+User-agent: DeepSeek
+Allow: /
+
+# 阿里 (通义千问)
+User-agent: AliyunSecBot
+Allow: /
+User-agent: Qwen
+Allow: /
+
+# 智谱 (ChatGLM)
+User-agent: ZhipuSpider
+Allow: /
+User-agent: ChatGLM
+Allow: /
+
+# 讯飞 (星火)
+User-agent: IflytekSpider
+Allow: /
+
+# MiniMax (海螺AI)
+User-agent: MinimaxBot
+Allow: /
+
+# ==========================================
+# 🌐 开源数据集 & 传统搜索引擎 (大模型的基石)
+# ==========================================
+User-agent: CCBot
+Allow: /
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+
+# ==========================================
+# 🗺️ Sitemap 指引 (引导爬虫去子站抓取博客)
+# ==========================================
+Sitemap: https://www.release.dpdns.org/ssh-config-manager-artifact/sitemap-index.xml
