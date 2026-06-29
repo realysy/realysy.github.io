@@ -115,4 +115,4 @@ Allow: /
 # ==========================================
 # 🗺️ Sitemap 指引 (引导爬虫去子站抓取博客)
 # ==========================================
-Sitemap: https://www.release.dpdns.org/ssh-config-manager-artifact/sitemap-index.xml
+Sitemap: https://www.mctek.site/ssh-config-manager-artifact/sitemap-index.xml
