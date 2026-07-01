@@ -1,0 +1,36 @@
+---
+// src/layouts/Layout.astro
+// 基础布局：注入全局样式，设置 meta 和 sitemap 相关元素
+import '@/styles/global.css';  // 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Realysy's personal site - projects and writings." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <!-- 暗色模式初始脚本，防止闪烁 -->
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <slot />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+---
+// src/components/Header.astro
+// 顶部导航：项目名 + 语言切换（预留）
+
+const isZh = false; // 未来可扩展，暂定英文
+---
+
+<div class="top-bar">
+  <h1>
+    <a href="/" class="home-link" style="text-decoration: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+      realysy
+    </a>
+  </h1>
+  <div class="top-actions">
+    <!-- 预留语言切换，当前隐藏 -->
+    <!-- <a href="#" class="lang-switch-btn">{isZh ? 'EN' : '中文'}</a> -->
+  </div>
+</div>
