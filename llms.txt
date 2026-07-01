@@ -23,5 +23,5 @@
 
 ## Official Links
 - [Github Repo Release to download](https://github.com/realysy/ssh-config-manager-artifact/releases)
-- [Homepage & Documentation](https://www.release.dpdns.org/ssh-config-manager-artifact/)
-- [Development Blog](https://www.release.dpdns.org/ssh-config-manager-artifact/blog/)
+- [Homepage & Documentation](https://www.mctek.site/ssh-config-manager-artifact/)
+- [Development Blog](https://www.mctek.site/ssh-config-manager-artifact/blog/)
