@@ -10,11 +10,6 @@ const SITE = 'https://www.mctek.site/';
 // 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
 const SITE_BASE = '/';
 
-// 要追加的外部 sitemap 列表: 可以自由增删, 允许为空; 需保证构建时这些 URL 存在且可访问, 否则不会添加
-const OUTSIDE_SITEMAPS = [
-  '<sitemap><loc>https://www.mctek.site/ssh-config-manager-artifact/sitemap-index.xml</loc></sitemap>'
-];
-
 function slugify(text) {
   return text.toString().toLowerCase()
     .replace(/\.md$/, '').replace(/\s+/g, '-')
@@ -184,59 +179,5 @@ export default defineConfig({
         return item;
       },
     }),
-
-    // ================= 新增：扩展 sitemap-index.xml =================
-    // 自定义集成，在构建结束后向生成的 sitemap-index.xml 追加外部项目 sitemap
-    {
-      name: 'extend-sitemap-index',
-      hooks: {
-        'astro:build:done': async ({ dir }) => {
-          const indexFile = new URL('sitemap-index.xml', dir.href);
-          if (!fs.existsSync(indexFile)) {
-            console.warn('[extend-sitemap-index] ⚠️ 本站 sitemap-index.xml 未生成，跳过追加');
-            return;
-          }
-
-          let content = fs.readFileSync(indexFile, 'utf-8');
-          const additionalEntries = [];
-
-          // 逐个检查外部 sitemap 是否可访问，并获取修改时间
-          for (const sitemapStr of OUTSIDE_SITEMAPS) {
-            // 提取 <loc> 内的纯 URL
-            const locMatch = sitemapStr.match(/<loc>(.*?)<\/loc>/);
-            if (!locMatch) {
-              console.warn(`[extend-sitemap-index] ⚠️ 无法解析 URL: ${sitemapStr}`);
-              continue;
-            }
-            const loc = locMatch[1];
-
-            try {
-              const response = await fetch(loc, { method: 'HEAD' });
-              if (!response.ok) {
-                console.warn(`[extend-sitemap-index] ⚠️ 外部 sitemap 不可访问 (${response.status}): ${loc}`);
-                continue;
-              }
-              // 尝试从响应头获取 Last-Modified，若无则留空
-              const lastModHeader = response.headers.get('last-modified');
-              const lastmod = lastModHeader ? new Date(lastModHeader).toISOString() : '';
-              const lastmodXml = lastmod ? `<lastmod>${lastmod}</lastmod>` : '';
-              additionalEntries.push(`<sitemap><loc>${loc}</loc>${lastmodXml}</sitemap>`);
-              console.log(`[extend-sitemap-index] ✅ 检查通过: ${loc}${lastmod ? ` (lastmod: ${lastmod})` : ''}`);
-            } catch (err) {
-              console.warn(`[extend-sitemap-index] ❌ 检查失败: ${loc}`, err.message);
-            }
-          }
-
-          if (additionalEntries.length > 0) {
-            const appendStr = additionalEntries.join('');
-            content = content.replace('</sitemapindex>', appendStr + '</sitemapindex>');
-            fs.writeFileSync(indexFile, content, 'utf-8');
-            console.log(`[extend-sitemap-index] ✅ 已追加 ${additionalEntries.length} 个外部 sitemap 引用`);
-          } else {
-            console.log('[extend-sitemap-index] 没有可用的外部 sitemap');
-          }
-        }
-      }
-    }
   ],
 });
