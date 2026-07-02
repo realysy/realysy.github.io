@@ -1,11 +1,19 @@
+// astro.config.mjs
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 
-// 提取 base 配置，方便后续在 serialize 中复用
+// 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
+const SITE = 'https://www.mctek.site/';
+// 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
 const SITE_BASE = '/';
+
+// 要追加的外部 sitemap 列表: 可以自由增删, 允许为空
+const OUTSIDE_SITEMAPS = [
+  '<sitemap><loc>https://www.mctek.site/ssh-config-manager-artifact/sitemap-index.xml</loc></sitemap>'
+];
 
 function slugify(text) {
   return text.toString().toLowerCase()
@@ -91,9 +99,7 @@ function getStaticPageGitDate(targetPath) {
 
 // https://astro.build/config
 export default defineConfig({
-  // 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
-  site: 'https://www.mctek.site/', 
-  // 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
+  site: SITE, 
   base: SITE_BASE, 
   integrations: [
     sitemap({
@@ -178,5 +184,27 @@ export default defineConfig({
         return item;
       },
     }),
+    // ================= 新增：扩展 sitemap-index.xml =================
+    // 自定义集成，在构建结束后向生成的 sitemap-index.xml 追加外部项目 sitemap
+    {
+      name: 'extend-sitemap-index',
+      hooks: {
+        'astro:build:done': async ({ dir }) => {
+          const indexFile = new URL('sitemap-index.xml', dir.href);
+          if (!fs.existsSync(indexFile)) {
+            console.warn('[extend-sitemap-index] sitemap-index.xml 未生成，跳过追加');
+            return;
+          }
+          let content = fs.readFileSync(indexFile, 'utf-8');
+
+          const appendStr = OUTSIDE_SITEMAPS.join('');
+
+          // 在 </sitemapindex> 之前插入
+          content = content.replace('</sitemapindex>', appendStr + '</sitemapindex>');
+          fs.writeFileSync(indexFile, content, 'utf-8');
+          console.log('[extend-sitemap-index] ✅ 已向 sitemap-index.xml 追加外部 sitemap 引用');
+        }
+      }
+    }
   ],
 });
