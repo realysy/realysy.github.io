@@ -1,1 +1,1 @@
-O captain my captain
+Hi, wanna visit my [portfolio](https://www.mctek.site/) ?

@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ master ] # 如果您的主分支叫 master, 请改为 master
+    # 过滤: 只有当以下网站相关文件发生更改时，才触发构建和部署
+    paths:
+      - 'public/**'               # 静态资源 (截图、favicon、验证文件等)
+      - 'src/**'                  # Astro 源码 (组件、页面、样式、工具函数)
+      - 'astro.config.mjs'        # Astro 配置文件
+      - 'package.json'            # 依赖声明
+      - 'pnpm-lock.yaml'          # 依赖锁定文件
+      - 'tsconfig.json'           # TypeScript 配置
+      - '.github/workflows/**'    # 工作流配置本身 (防止修改 yml 后不触发)
+      
+  # 保留手动触发功能，且手动触发不受 paths 限制
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 必须拉取完整历史以获取文件修改历史
+        
+      - name: Install, build, and upload your site
+        uses: withastro/action@v2
+        with:
+          # 强制指定使用 Node.js 22，以兼容 pnpm 11.x
+          node-version: 22
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
