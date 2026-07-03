@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import compress from 'astro-compress'; 
 
 // 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
 const SITE = 'https://www.mctek.site/';
@@ -178,6 +179,13 @@ export default defineConfig({
         
         return item;
       },
+    }),
+    compress({
+      // 禁用插件的 CSS 压缩/重构功能
+      // Astro 底层的 Vite 已经自带了完美的 CSS 压缩, 且完全兼容 Astro 的 Scoped CSS 机制.
+      // 让 compress() 只负责 HTML 和 JS 的压缩, 避免它破坏 @media 和 data-astro-cid 属性.
+      CSS: false, // 兼容 @playform/compress
+      css: false, // 兼容老版本 astro-compress
     }),
   ],
 });
