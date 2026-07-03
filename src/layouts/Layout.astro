@@ -68,6 +68,9 @@ const xDefaultUrl = new URL(baseUrl, Astro.site).toString();
   
   <link rel="sitemap" href={`${baseUrl}sitemap-index.xml`} />
   
+  <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
+  <script is:inline src={`${baseUrl}config.js`}></script>
+
   <!-- 暗色模式初始脚本, 防止闪烁 -->
   <script is:inline>
     (function() {
