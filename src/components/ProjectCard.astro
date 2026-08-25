@@ -1,6 +1,7 @@
 ---
-// src/components/ProjectCard.astro
-// 项目卡片组件：标题、简述、链接
+/** src/components/ProjectCard.astro
+ * 项目卡片组件：标题、简述、链接
+ */
 
 export interface Props {
   title: string;
@@ -13,7 +14,7 @@ const { title, description, href, lang = 'en' } = Astro.props;
 ---
 
 <div class="project-card">
-  <h4>{title}</h4>
+  <h3>{title}</h3>
   <p>{description}</p>
   <a href={href}>{lang === 'zh' ? '了解更多' : 'Learn more'}</a>
 </div>

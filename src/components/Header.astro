@@ -1,18 +1,159 @@
 ---
-// src/components/Header.astro
-// 顶部导航：项目名 + 语言切换（预留）
+/** src/components/Header.astro
+ * 顶部导航：Logo + 快捷操作 + 语言/主题切换
+ */
 
-const isZh = false; // 未来可扩展，暂定英文
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+const currentPath = Astro.url.pathname;
+const isZh = currentPath.includes('/zh/');
+
+// 🌍 首页链接（根据当前语言）
+const homeHref = isZh ? `${baseUrl}zh/` : baseUrl;
+
+// 🔄 动态生成语言切换链接 (保留当前路由层级)
+let langSwitchHref = '';
+if (isZh) {
+  langSwitchHref = currentPath.replace('/zh/', '/');
+} else {
+  langSwitchHref = currentPath.replace(baseUrl, `${baseUrl}zh/`);
+}
+
+const langSwitchFlag = isZh ? '🇺🇸' : '🇨🇳';
+const langSwitchText = isZh ? 'EN' : '中文';
 ---
 
 <div class="top-bar">
-  <h1>
-    <a href="/" class="home-link" style="text-decoration: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-      realysy
-    </a>
-  </h1>
+  <div class="site-logo">
+    <a href={homeHref} class="home-link">realysy</a>
+  </div>
   <div class="top-actions">
-    <!-- 预留语言切换，当前隐藏 -->
-    <a href="#" class="lang-switch-btn">{isZh ? 'EN' : '中文'}</a>
+    <!-- GitHub 入口 -->
+    <a href="https://github.com/realysy" class="icon-button" target="_blank" rel="noopener" data-tooltip="GitHub" aria-label="GitHub">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    </a>
+
+    <!-- 亮暗主题切换按钮 -->
+    <button id="theme-toggle" class="icon-button" data-tooltip={isZh ? "切换主题" : "Toggle theme"} aria-label="Toggle theme">🌙</button>
+
+    <!-- 语言切换 -->
+    <a href={langSwitchHref} class="link-button lang-switch-btn" aria-label="Switch Language">
+      <span class="lang-flag">{langSwitchFlag}</span>
+      <span class="lang-text">{langSwitchText}</span>
+    </a>
   </div>
 </div>
+
+<style>
+  .site-logo {
+    font-size: 1.5em;
+    font-weight: 700;
+  }
+
+  .home-link {
+    text-decoration: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .top-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .icon-button {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    color: #24292f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .icon-button:hover {
+    background: #f3f4f6;
+    color: #667eea;
+  }
+
+  /* Tooltip 提示样式 */
+  .icon-button[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #24292f;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .icon-button[data-tooltip]:hover::after {
+    opacity: 1;
+  }
+
+  .lang-switch-btn {
+    font-weight: 500;
+    text-decoration: none;
+    color: #24292f;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+
+  .lang-switch-btn:hover {
+    background: #f3f4f6;
+    text-decoration: none;
+  }
+
+  /* 暗色模式适配 */
+  :global([data-theme="dark"]) .icon-button { color: #c9d1d9; }
+  :global([data-theme="dark"]) .icon-button:hover { background: #30363d; color: #6e7ef5; }
+  :global([data-theme="dark"]) .icon-button[data-tooltip]::after { background: #c9d1d9; color: #0d1117; }
+  :global([data-theme="dark"]) .lang-switch-btn { color: #c9d1d9; }
+  :global([data-theme="dark"]) .lang-switch-btn:hover { background: #30363d; }
+</style>
+
+<!-- 主题切换 JS (防闪烁) -->
+<script is:inline>
+  (function() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', initialTheme);
+  })();
+</script>
+<script>
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const updateIcon = () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if(themeToggleBtn) themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
+  };
+  updateIcon();
+  
+  themeToggleBtn?.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateIcon();
+  });
+</script>

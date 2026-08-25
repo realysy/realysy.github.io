@@ -1,0 +1,32 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+---
+
+<Layout title="使用条款 - realysy" lang="zh">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container markdown-content">
+      <h1>使用条款</h1>
+      <p class="last-updated"><strong>最后更新日期：</strong>2026年8月25日</p>
+      
+      <p>欢迎来到我的个人作品集。访问本网站即表示您同意以下条款。</p>
+      
+      <h2>1. 内容与知识产权</h2>
+      <p>本网站展示的文字、图形和代码片段仅供信息和作品集展示之用。除非明确声明为开源（例如通过 GitHub 的 MIT/Apache 许可证），否则内容和软件二进制文件均为开发者的独家知识产权。</p>
+      
+      <h2>2. 软件许可</h2>
+      <p>下载或购买本网站推广的任何软件，即表示您接受<strong>该软件随附的最终用户许可协议（EULA）</strong>所授予的许可。诸如逆向工程、设备绑定或商业重新分发等限制，由软件内部的条款定义，而非本网站。</p>
+      
+      <h2>3. 免责声明</h2>
+      <p>本网站的信息和软件按“现状”提供，不提供任何形式的保证。开发者不对因使用本网站或从中下载的软件而产生的任何损害承担责任。</p>
+      
+      <a href={`${baseUrl}zh/`} class="back-link" style="display: inline-block; margin-top: 24px; color: #667eea; text-decoration: none; font-weight: 500;">← 返回首页</a>
+    </div>
+    <Footer />
+  </div>
+</Layout>

@@ -1,4 +1,5 @@
 // astro.config.mjs
+
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { execSync } from 'child_process';
@@ -11,6 +12,10 @@ import compress from 'astro-compress';
 const SITE = 'https://www.mctek.site/';
 // 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
 const SITE_BASE = '/';
+
+const cwd = process.cwd();
+const blogDir = path.join(cwd, 'src/content/blog');  // 博客目录与时间戳 Map
+const docsDir = path.join(cwd, 'src/content/docs');  // 文档目录与时间戳 Map
 
 // 🌟 核心修复：对路径的每一段分别 slugify，与 Astro 的 URL 生成逻辑完美对齐
 // 例如: 'zh/2026/06/Github Action for CI CD' → 'zh/2026/06/github-action-for-ci-cd'
@@ -27,11 +32,6 @@ function slugifyPath(filePath) {
   }).join('/');
 }
 
-
-const cwd = process.cwd();
-const blogDir = path.join(process.cwd(), 'src/content/blog');
-const blogGitTimeMap = new Map();
-
 function getMdFiles(dir) {
   let results = [];
   if (!fs.existsSync(dir)) return results;
@@ -47,45 +47,48 @@ function getMdFiles(dir) {
   return results;
 }
 
-async function initBlogGitTimes() {
-  const mdFiles = getMdFiles(blogDir);
-  console.log(`[Sitemap] 🚀 开始扫描 ${mdFiles.length} 篇博客...`);
+// 文件 Git 时间扫描函数
+async function scanDirectoryForGitTimes(dir, label) {
+  const timeMap = new Map();
+  const mdFiles = getMdFiles(dir);
+  
+  if (mdFiles.length === 0) {
+    console.log(`[Sitemap] ℹ️ 未发现${label}文件, 跳过 Git 扫描。`);
+    return timeMap;
+  }
+  
+  console.log(`[Sitemap] 🚀 开始扫描 ${mdFiles.length} 篇${label}...`);
   
   for (const fullPath of mdFiles) {
     const relativePath = path.relative(cwd, fullPath).split(path.sep).join('/');
-    // 🌟 核心优化：提取相对于 blogDir 的路径，并通过 slugifyPath 与 Astro URL 生成逻辑对齐
-    // 这样 'Github Action for CI CD.md' → 'github-action-for-ci-cd'，与 Sitemap 中的 URL slug 完美咬合
-    const rawRelativePath = path.relative(blogDir, fullPath).split(path.sep).join('/');
+    const rawRelativePath = path.relative(dir, fullPath).split(path.sep).join('/');
     const mapKey = slugifyPath(rawRelativePath);
 
     try {
-      // 使用原生 execSync，并强制指定 cwd，捕获所有输出
       const gitDate = execSync(
         `git log -1 --format=%cI -- "${relativePath}"`, 
         { encoding: 'utf-8', cwd: cwd, stdio: ['pipe', 'pipe', 'pipe'] }
       ).trim();
 
       if (gitDate) {
-        blogGitTimeMap.set(mapKey, new Date(gitDate));
-        console.log(`[Sitemap] ✅ Git 成功: ${relativePath}`);
+        timeMap.set(mapKey, new Date(gitDate));
       } else {
         throw new Error('Git 返回为空');
       }
     } catch (e) {
-      // 🎯 核心诊断：打印出 Git 的真实报错信息
-      const errMsg = e.stderr ? e.stderr.toString().trim() : e.message;
-      console.warn(`[Sitemap] ❌ Git 失败: ${relativePath}`);
-      console.warn(`   └─ 原因: ${errMsg}`);
-      
       // 兜底：使用文件系统的最后修改时间 (mtime)
       const stat = fs.statSync(fullPath);
-      blogGitTimeMap.set(mapKey, stat.mtime);
+      timeMap.set(mapKey, stat.mtime);
     }
   }
-  console.log(`[Sitemap] 🏁 扫描完成，共生成 ${blogGitTimeMap.size} 个精准时间戳。`);
+  console.log(`[Sitemap] 🏁 ${label}扫描完成，共生成 ${timeMap.size} 个精准时间戳。`);
+  return timeMap;
 }
 
-await initBlogGitTimes();
+// 分别扫描博客和文档目录，直接赋值给常量
+const blogGitTimeMap = await scanDirectoryForGitTimes(blogDir, '博客');
+const docGitTimeMap = await scanDirectoryForGitTimes(docsDir, '文档');
+
 
 // 获取静态页面 (.astro) 或任意文件的 Git 时间 (统一使用 execSync 替代未导入的 gitlog)
 function getStaticPageGitDate(targetPath) {
@@ -156,25 +159,51 @@ const blogListDeps = [
 ];
 const blogListMaxDate = getMaxGitDate(blogListDeps.map(p => path.join(cwd, p)));
 
-// 🌟 4. 博客详情页依赖 (极致精细化：中英文模板分离)
+// 4. 博客详情页依赖 (极致精细化：中英文模板分离)
 const enBlogPostDeps = ['src/pages/blog/[...slug].astro', 'src/components/Giscus.astro'];
 const enBlogPostMaxDate = getMaxGitDate(enBlogPostDeps.map(p => path.join(cwd, p)));
 
 const zhBlogPostDeps = ['src/pages/zh/blog/[...slug].astro', 'src/components/Giscus.astro'];
 const zhBlogPostMaxDate = getMaxGitDate(zhBlogPostDeps.map(p => path.join(cwd, p)));
 
-console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${zhBlogPostMaxDate?.toISOString()})`);
+// 文档详情页及列表页的依赖组件 (Sidebar, TOC, PrevNext 等)
+const docDeps = [
+  'src/pages/doc/[...slug].astro',
+  'src/pages/zh/doc/[...slug].astro',
+  'src/pages/doc/index.astro',
+  'src/pages/zh/doc/index.astro',
+  'src/components/docs/DocSidebar.astro',
+  'src/components/docs/DocTOC.astro',
+  'src/components/docs/DocPrevNext.astro',
+  'src/components/docs/DocStyles.astro',
+];
+const docMaxDate = getMaxGitDate(docDeps.map(p => path.join(cwd, p)));
 
+console.log(`[Sitemap] 🕒 依赖时间戳计算完成:
+ - 全局(${globalMaxDate?.toISOString()})
+ - 主页(${homeMaxDate?.toISOString()})
+ - 列表(${blogListMaxDate?.toISOString()})
+ - 详情(${zhBlogPostMaxDate?.toISOString()})
+ - 文档(${docMaxDate?.toISOString()})`);
 
-// 🛡️ 自定义 Astro 集成: 在构建完成后清理所有 HTML 文件中的注释
-function removeHtmlComments() {
+// 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
+function postBuildCleanup() {
   return {
-    name: 'remove-html-comments',
+    name: 'post-build-cleanup',
     hooks: {
       'astro:build:done': async ({ dir }) => {
         // dir 是一个 URL 对象, 需要转换为本地文件系统路径
         const outDir = fileURLToPath(dir);
-        let cleanedCount = 0;
+        let processedCount = 0;
+
+        // 🌟 1. 预构建文档 URL 映射表 (基于 docGitTimeMap 的 key)
+        const docUrlMap = new Map();
+        for (const key of docGitTimeMap.keys()) {
+          const isZh = key.startsWith('zh/');
+          const slug = isZh ? key.slice(3) : key.slice(3); 
+          const urlPath = (isZh ? '/zh/doc/' : '/doc/') + slug + '/';
+          docUrlMap.set(key, urlPath);
+        }
 
         // 递归遍历 dist 目录
         const processDir = (currentDir) => {
@@ -186,21 +215,75 @@ function removeHtmlComments() {
             if (stat.isDirectory()) {
               processDir(fullPath);
             } else if (file.endsWith('.html')) {
-              const content = fs.readFileSync(fullPath, 'utf-8');
-              // 正则匹配并移除 HTML 注释 (包含换行)
-              const newContent = content.replace(/<!--[\s\S]*?-->/g, '');
+              let content = fs.readFileSync(fullPath, 'utf-8');
+              const originalContent = content;
+
+              const currentHtmlRelPath = path.relative(outDir, fullPath).split(path.sep).join('/');
+              const isZh = currentHtmlRelPath.startsWith('zh/doc/');
+              
+              let virtualSourceMd = '';
+              if (currentHtmlRelPath.endsWith('/index.html')) {
+                const docPrefix = isZh ? 'zh/doc/' : 'doc/';
+                if (currentHtmlRelPath.startsWith(docPrefix)) {
+                  const langPrefix = isZh ? 'zh/' : 'en/';
+                  const withoutIndex = currentHtmlRelPath.slice(0, -'index.html'.length);
+                  const slug = withoutIndex.slice(docPrefix.length).replace(/\/$/, ''); 
+                  virtualSourceMd = slug ? `${langPrefix}${slug}.md` : `${langPrefix}index.md`;
+                }
+              }
+
+              // 🌟 2. 智能修复本地 .md/.mdx 链接
+              content = content.replace(/href="(?!https?:\/\/|mailto:|#|data:)(?:\.\/)?([^"]*?)\.mdx?((?:[?#][^"]*)?)"/gi, (match, p1, p2) => {
+                if (virtualSourceMd && docUrlMap.size > 0) {
+                  const currentDirVirtual = path.posix.dirname(virtualSourceMd);
+                  const targetVirtualMd = path.posix.normalize(path.posix.join(currentDirVirtual, p1 + '.md'));
+                  const targetKey = slugifyPath(targetVirtualMd);
+                  let targetUrl = docUrlMap.get(targetKey);
+                  
+                  if (!targetUrl) {
+                    const langPrefix = isZh ? 'zh/' : 'en/';
+                    const cleanP1 = p1.replace(/^\.\.?\//, ''); 
+                    const fallbackKey = slugifyPath(langPrefix + cleanP1);
+                    targetUrl = docUrlMap.get(fallbackKey);
+                  }
+                  
+                  if (targetUrl) {
+                    return `href="${SITE_BASE}${targetUrl}${p2}"`;
+                  }
+                }
+                
+                if (!p1.includes('/')) {
+                  return `href="../${p1}/${p2}"`;
+                }
+                return `href="${p1}/${p2}"`;
+              });
+
+              // 🌟 3. 核心新增: 自动为本站内部绝对路径注入 SITE_BASE
+              // 匹配 href="/" 或 href="/doc/" 等，排除外部链接 (//) 和已包含 base 的链接
+              content = content.replace(/href="(\/[^"]*)"/gi, (match, p1) => {
+                // 排除协议相对 URL (如 //cdn.example.com)
+                if (p1.startsWith('//')) return match;
+                // 排除已经包含 SITE_BASE 的链接 (防止重复注入)
+                if (p1.startsWith(SITE_BASE)) return match;
+                
+                // 自动注入 base 路径
+                return `href="${SITE_BASE}${p1}"`;
+              });
+
+              // 🌟 4. 移除所有 HTML 注释 (包含换行)
+              content = content.replace(/<!--[\s\S]*?-->/g, '');
               
               // 只有内容发生改变时才写回磁盘, 减少不必要的 I/O
-              if (content !== newContent) {
-                fs.writeFileSync(fullPath, newContent, 'utf-8');
-                cleanedCount++;
+              if (content !== originalContent) {
+                fs.writeFileSync(fullPath, content, 'utf-8');
+                processedCount++;
               }
             }
           }
         };
 
         processDir(outDir);
-        console.log(`[remove-html-comments] 🧹 清理完成, 共处理 ${cleanedCount} 个 HTML 文件.`);
+        console.log(`[post-build-cleanup] 🧹 构建后处理完成, 共优化 ${processedCount} 个 HTML 文件 (含链接修复与注释清理).`);
       }
     }
   };
@@ -211,6 +294,7 @@ function removeHtmlComments() {
 export default defineConfig({
   site: SITE, 
   base: SITE_BASE, 
+
   integrations: [
     sitemap({
       // 过滤掉不需要收录的页面 (如果有的话)
@@ -230,7 +314,7 @@ export default defineConfig({
           const langPrefix = blogMatch[1] || ''; // 'zh/' 或 ''
           const slug = blogMatch[2]; // '2026/05/...'
           
-          // 拼接出与 initBlogGitTimes 中完全一致的 Map Key
+          // 拼接出与 scanDirectoryForGitTimes() 中完全一致的 Map Key
           const mapKey = `${langPrefix}${slug}`;
           const postDate = blogGitTimeMap.get(mapKey);
           
@@ -243,7 +327,26 @@ export default defineConfig({
           if (!postDate) {
             console.warn(`[Sitemap] ❌ 未找到博客时间戳: ${mapKey}`);
           }
-        } else {
+        } 
+        // 🌟 新增: 匹配文档详情页
+        else if (url.match(/\/(zh\/)?doc\/(.+)\/$/)) {
+          const docMatch = url.match(/\/(zh\/)?doc\/(.+)\/$/);
+          // 英文 URL 没有 zh/ 前缀，默认补全 'en/' 以匹配 Map 中的 Key
+          const langPrefix = docMatch[1] || 'en/'; 
+          const slug = docMatch[2]; 
+          
+          // 拼接出与 initDocGitTimes 中完全一致的 Map Key (如 'en/getting-started/installation')
+          const mapKey = `${langPrefix}${slug}`;
+          const postDate = docGitTimeMap.get(mapKey);
+          
+          // 文档详情页的 lastmod = max(文章md修改时间, 全局依赖修改时间, 文档组件修改时间)
+          item.lastmod = getLatestDate(postDate, globalMaxDate, docMaxDate);
+          
+          if (!postDate) {
+            console.warn(`[Sitemap] ❌ 未找到文档时间戳: ${mapKey}`);
+          }
+        } 
+        else {
           // B. 匹配静态页面
           // 🛠️ 核心修复：item.url 是完整的绝对 URL (如 https://.../base/zh/)，
           // 必须先提取 pathname 并剥离 base，才能正确映射到 src/pages 目录
@@ -298,6 +401,9 @@ export default defineConfig({
           } else if (rawPathname === 'blog' || rawPathname === 'zh/blog') {
             // 博客列表页
             item.lastmod = getLatestDate(staticDate, globalMaxDate, blogListMaxDate);
+          } else if (rawPathname === 'doc' || rawPathname === 'zh/doc') {
+            // 文档列表页
+            item.lastmod = getLatestDate(staticDate, globalMaxDate, docMaxDate);
           } else {
             // 其他普通静态页面 (如 privacy, terms)
             item.lastmod = getLatestDate(staticDate, globalMaxDate);
@@ -332,6 +438,7 @@ export default defineConfig({
         return item;
       },
     }),
+
     compress({
       // 禁用插件的 CSS 压缩/重构功能
       // Astro 底层的 Vite 已经自带了完美的 CSS 压缩, 且完全兼容 Astro 的 Scoped CSS 机制.
@@ -346,7 +453,7 @@ export default defineConfig({
       html: false,
     }),
 
-    // 🌟 新增: 注入自定义的 HTML 注释清理集成
-    removeHtmlComments(),
+    // 注入自定义的 postBuild 集成
+    postBuildCleanup(),
   ],
 });

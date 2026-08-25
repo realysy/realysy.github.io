@@ -270,42 +270,44 @@ a:hover {
 }
 
 /* 暗色模式 */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #0d1117;
-    color: #c9d1d9;
-  }
-  .page-wrapper {
-    background: #161b22;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.4);
-  }
-  .hero h2,
-  .projects-section h3,
-  .project-card h4 {
-    color: #e6edf3;
-  }
-  .hero p,
-  .project-card p {
-    color: #8b949e;
-  }
-  .primary-btn {
-    background: linear-gradient(135deg, #6e7ef5 0%, #8b5cf6 100%);
-  }
-  .secondary-btn {
-    border-color: #30363d;
-    color: #c9d1d9;
-  }
-  .secondary-btn:hover {
-    border-color: #6e7ef5;
-    color: #6e7ef5;
-  }
-
-  .video-wrapper {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  }
-
-  .footer,
-  .footer-links a {
-    color: #8b949e;
-  }
+/* 暗色模式 (支持 JS 手动切换与系统偏好) */
+[data-theme="dark"] body {
+  background: #0d1117;
+  color: #c9d1d9;
+}
+[data-theme="dark"] .page-wrapper {
+  background: #161b22;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .hero h2,
+[data-theme="dark"] .hero h1,
+[data-theme="dark"] .projects-section h3,
+[data-theme="dark"] .project-card h4 {
+  color: #e6edf3;
+}
+[data-theme="dark"] .hero p,
+[data-theme="dark"] .project-card p {
+  color: #8b949e;
+}
+[data-theme="dark"] .primary-btn {
+  background: linear-gradient(135deg, #6e7ef5 0%, #8b5cf6 100%);
+}
+[data-theme="dark"] .secondary-btn {
+  border-color: #30363d;
+  color: #c9d1d9;
+}
+[data-theme="dark"] .secondary-btn:hover {
+  border-color: #6e7ef5;
+  color: #6e7ef5;
+}
+[data-theme="dark"] .footer,
+[data-theme="dark"] .footer-links a {
+  color: #8b949e;
+}
+[data-theme="dark"] .project-card {
+  background: #0d1117;
+  border-color: #30363d;
+}
+[data-theme="dark"] a {
+  color: #58a6ff;
 }

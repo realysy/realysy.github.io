@@ -1,0 +1,25 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+---
+<Layout title="Terms of Use - realysy" lang="en">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container markdown-content">
+      <h1>Terms of Use</h1>
+      <p class="last-updated"><strong>Last Updated:</strong> June 27, 2026</p>
+      <p>Welcome to my personal portfolio. By accessing this website, you agree to the following terms.</p>
+      <h2>1. Content & Intellectual Property</h2>
+      <p>The text, graphics, and code snippets displayed on this website are provided for informational and portfolio purposes. Unless explicitly stated as open-source (e.g., via a GitHub MIT/Apache license), the content and software binaries remain the exclusive intellectual property of the developer.</p>
+      <h2>2. Software Licenses</h2>
+      <p>Downloading or purchasing any software promoted on this site grants you a license subject to the <strong>specific End-User License Agreement (EULA)</strong> included with that software. Restrictions such as reverse-engineering, device-binding, or commercial redistribution are defined in the software's internal terms, not on this website.</p>
+      <h2>3. Disclaimer</h2>
+      <p>The information and software on this site are provided "as is", without warranties of any kind. The developer shall not be held liable for any damages arising from the use of the website or the software downloaded from it.</p>
+      <a href={baseUrl} class="back-link" style="display: inline-block; margin-top: 24px; color: #667eea; text-decoration: none; font-weight: 500;">← Back to Home</a>
+    </div>
+    <Footer />
+  </div>
+</Layout>

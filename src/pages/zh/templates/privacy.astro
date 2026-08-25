@@ -1,0 +1,32 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+---
+
+<Layout title="隐私政策 - realysy" lang="zh">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container markdown-content">
+      <h1>隐私政策</h1>
+      <p class="last-updated"><strong>最后更新日期：</strong>2026年8月25日</p>
+      
+      <p>本网站（mctek.site / realysy 个人主页）作为我的个人作品集和项目展示门户。</p>
+      
+      <h2>1. 不收集数据</h2>
+      <p>本网站<strong>不会</strong>收集、追踪或存储访客的任何个人信息、Cookie 或分析数据。页面中未嵌入任何广告或第三方追踪脚本。</p>
+      
+      <h2>2. 第三方链接</h2>
+      <p>本网站可能包含指向外部平台的链接，例如 GitHub、YouTube、itch.io 或淘宝。这些第三方服务拥有各自的隐私政策，我们对其数据实践不承担任何责任。</p>
+      
+      <h2>3. 软件产品</h2>
+      <p>本网站展示的部分项目为独立的软件应用程序（例如 SSH Config Manager）。<strong>这些特定软件产品的隐私政策和最终用户许可协议（EULA），受软件安装或激活时内部展示的协议约束。</strong>本网站的隐私政策不会覆盖这些软件产品自身的特定条款。</p>
+      
+      <a href={`${baseUrl}zh/`} class="back-link" style="display: inline-block; margin-top: 24px; color: #667eea; text-decoration: none; font-weight: 500;">← 返回首页</a>
+    </div>
+    <Footer />
+  </div>
+</Layout>
