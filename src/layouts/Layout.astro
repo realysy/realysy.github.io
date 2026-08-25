@@ -7,43 +7,63 @@ export interface Props {
   title: string;
   lang?: string;
   description?: string;
-  image?: string; // 建议预留 image 接口, 方便以后接入 og:image
+  image?: string;  // 接收的是构建后的图片 URL 字符串
 }
 
 const {
   title, 
   lang = 'en', 
-  description = "realysy's homepage site - projects and writings.",
+  description = "realysy's homepage site, showcasing main projects and blog posts, including completed and ongoing projects. Currently developing SSH Config Manager and related utilities.",
   image
 } = Astro.props;
 
-// 获取 base 路径, 用于拼接静态资源
+
+// 获取 base 路径, 用于拼接 public 目录下的静态资源
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 
 const currentPath = Astro.url.pathname;
-const canonicalUrl = new URL(currentPath, Astro.site).toString();
+const currentLang = getLangFromPath(currentPath, baseUrl);
+const isZh = currentLang === 'zh';
 
-// 🛡️ 核心修复: 计算完整的双向 hreflang 链接, 避免 Google 判定为配置错误
-const isZh = lang === 'zh';
-const alternatePath = localizePath(currentPath, isZh ? 'en' : 'zh', baseUrl);
-const alternateUrl = new URL(alternatePath, Astro.site).toString();
-const xDefaultUrl = new URL(baseUrl, Astro.site).toString();
+// 🌟 核心优化: 在服务端预先计算好双语的绝对路径, 彻底告别前端重复造轮子
+const zhPath = localizePath(currentPath, 'zh', baseUrl);
+const enPath = localizePath(currentPath, 'en', baseUrl);
+
+// 获取当前完整 URL，用于生成 canonical 和 OG 链接
+const canonicalUrl = new URL(isZh ? zhPath : enPath, Astro.site).toString();
+// 生成 Hreflang 交替链接
+const alternateUrl = new URL(isZh ? enPath : zhPath, Astro.site).toString();
+// 生成 x-default 兜底链接
+const xDefaultUrl = new URL(enPath, Astro.site).toString();
+
+// 动态生成完整的 OG 图片 URL
+const ogImageUrl = new URL(image, Astro.site).toString();
+
+// 生成注入前端的 JS 代码片段 - 使用 JSON.stringify 确保路径安全, 后续配合 set:html 避免 HTML 实体转义问题
+const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({ 
+  zh: zhPath, 
+  en: enPath, 
+  current: currentLang 
+})};`;
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang={lang}>
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8">
+
+  <!-- viewport-fit=cover 对 iPhone 刘海屏/底部安全区很重要 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no, email=no, address=no">
 
   <!-- 基础 SEO -->
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
 
-  <!-- 🛡️ 核心修复: 多语言 Hreflang 标签 (必须双向引用, 否则 Google 会忽略) -->
+  <!-- 多语言 Hreflang 标签 (告诉搜索引擎双语对应关系) -->
   <link rel="alternate" hreflang={lang} href={canonicalUrl} />
   <link rel="alternate" hreflang={isZh ? 'en' : 'zh'} href={alternateUrl} />
   <link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
@@ -53,37 +73,70 @@ const xDefaultUrl = new URL(baseUrl, Astro.site).toString();
   <meta property="og:url" content={canonicalUrl} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  {image && <meta property="og:image" content={new URL(image, Astro.site).toString()} />}
+  <meta property="og:image" content={ogImageUrl} />
   
-  <!-- 🛡️ 核心修复: Twitter 分享卡片 (无大图时降级为 summary, 避免爬虫报错) -->
-  <meta property="twitter:card" content={image ? "summary_large_image" : "summary"} />
+  <!-- Twitter 分享卡片 -->
+  <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content={canonicalUrl} />
   <meta property="twitter:title" content={title} />
   <meta property="twitter:description" content={description} />
-  {image && <meta property="twitter:image" content={new URL(image, Astro.site).toString()} />}
-
-  <!-- 🛡️ 核心修复: Favicon 使用 baseUrl 动态拼接, 防止子路径部署时 404 -->
+  <meta property="twitter:image" content={ogImageUrl} />
+  
+  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
   <link rel="icon" type="image/x-icon" href={`${baseUrl}favicon.ico`} />
   
   <link rel="sitemap" href={`${baseUrl}sitemap-index.xml`} />
-  
+
+
+  <!-- 架构说明: 渲染前阻塞脚本区 -->
+  <!-- 以下 is:inline 脚本在 HTML 解析时立即执行, 用于防止页面闪烁 (FOUC) 和处理全局配置 -->
+  <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
+
   <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
   <script is:inline src={`${baseUrl}config.js`}></script>
-
-  <!-- 暗色模式初始脚本, 防止闪烁 -->
+  
+  <!-- 🌍 注入服务端预计算的双语路径, 供前端重定向使用 -->
+  <script is:inline set:html={i18nScript}></script>
+  <!-- 🌍 初次访问时自动检测浏览器语言并重定向 (早期执行, 避免 FOUC) -->
   <script is:inline>
     (function() {
-      const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', theme);
+      const paths = window.SMGR_I18N_PATHS;
+      if (!paths) return;
+
+      // 🚨 核心 SEO 保护机制：利用爬虫的“无痕模式”特性
+      // 搜索引擎爬虫 (Googlebot/Bingbot) 的 localStorage 永远是空的 (null)
+      // 只有真实用户手动切换过语言后，这里才会有值，从而触发回访时的自动跳转
+      let cachedLang = null;
+      try {
+        cachedLang = localStorage.getItem('smgr_lang');
+      } catch (e) {
+        // 某些极端隐私模式下 localStorage 可能会报错，直接放弃执行
+        return; 
+      }
+
+      // 如果没有缓存（说明是首次访问的真实用户，或者是爬虫），直接放行，不重定向！
+      // 这样既保护了 SEO，又尊重了用户从外部点击进入的原始链接。
+      if (!cachedLang || (cachedLang !== 'zh' && cachedLang !== 'en')) {
+        return; 
+      }
+
+      const currentLang = paths.current;
+
+      // 仅当有缓存且缓存的语言与当前页面语言不一致时，才执行重定向
+      if (cachedLang !== currentLang && paths[cachedLang]) {
+        window.location.replace(paths[cachedLang] + location.search + location.hash);
+      }
     })();
   </script>
+
+
 </head>
 
 <body>
-  <div class="page-wrapper">
-    <slot />
-  </div>
+  <!-- slot 标签相当于一个"占位符", 用于接收各个页面传入的具体内容 -->
+  <slot />
+  <script src="@/scripts/main.js"></script>
 </body>
 
 </html>
