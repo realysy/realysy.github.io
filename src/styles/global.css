@@ -179,7 +179,7 @@ a:hover {
 /* 卡片网格，采用不等比布局避免三个相同卡片 */
 .project-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;  /* 第一个项目占两倍宽，第二个较窄 */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
   gap: 24px;
 }
 
@@ -214,6 +214,24 @@ a:hover {
   font-weight: 500;
   color: #667eea;
 }
+
+/* ✨ 新增：视频卡片包装器样式 */
+.video-wrapper {
+  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #000; /* 黑色背景防止视频加载时出现白边 */
+}
+
+.video-wrapper iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* 核心魔法：强制保持 16:9 比例 */
+  height: auto;
+  border: none;
+}
+
 
 /* Footer */
 .footer {
@@ -281,6 +299,11 @@ a:hover {
     border-color: #6e7ef5;
     color: #6e7ef5;
   }
+
+  .video-wrapper {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
   .footer,
   .footer-links a {
     color: #8b949e;

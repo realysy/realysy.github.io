@@ -14,7 +14,6 @@ import ProjectCard from '@/components/ProjectCard.astro';
   <Header />
   <main>
     <section class="hero">
-      <!-- 无 eyebrow，无 version 标签，无 scroll cue -->
       <h2>Developer, tinkerer.</h2>
       <p>I build tools, apps that make life easier. Currently focused on SSH Config Manager and related utilities.</p>
       <div class="cta-group">
@@ -27,14 +26,28 @@ import ProjectCard from '@/components/ProjectCard.astro';
     <section id="projects" class="projects-section">
       <h3>Projects</h3>
       <div class="project-grid">
-        <!-- 第一个项目占据较大网格，第二个项目可后续添加 -->
+        <!-- 第一个项目占据较大网格 -->
         <ProjectCard 
           title="SSH Config Manager" 
-          description="A cross-platform tool for group-based visual management of SSH connections. Features a built-in SFTP file manager (including a code editor) and integrates with Wezterm, Kitty, Alacritty, Windows Terminal, and more." 
+          description="A cross-platform tool for group-based visual management of SSH host configs. Features a built-in SFTP file manager (including a code editor) and integrates with Wezterm, Kitty, Alacritty, Windows Terminal, and more." 
           href="/ssh-config-manager-artifact/" 
         />
-        <!-- 第二个项目占位（当有新项目时启用） -->
-        <!-- <ProjectCard title="Another Project" description="Description" href="/another/" /> -->
+        
+        <!-- ✨ 第二个项目：C++ 文件管理库 (带有 YouTube 演示视频) -->
+        <div class="project-card">
+          <h4>C++ File Manager with WebUI</h4>
+          <p>A C++ file management library with HTTP API & WebUI. Perfect for managing files on remote machines, such as developing and debugging robots.</p>
+          <div class="video-wrapper">
+            <iframe 
+              src="https://www.youtube.com/embed/dZEh1HSGWWo?si=BYJqPuKuHf8XUNUv&controls=0" 
+              title="C++ File Manager WebUI Demo" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="strict-origin-when-cross-origin" 
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
       </div>
     </section>
   </main>

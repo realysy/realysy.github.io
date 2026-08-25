@@ -1,6 +1,6 @@
 ---
 /**
- * src/pages/index.astro
+ * src/pages/zh/index.astro
  * 个人主页: 自我介绍 + 项目展示
  */
 
@@ -27,14 +27,28 @@ import ProjectCard from '@/components/ProjectCard.astro';
     <section id="projects" class="projects-section">
       <h3>项目</h3>
       <div class="project-grid">
-        <!-- 第一个项目占据较大网格, 第二个项目可后续添加 -->
+        <!-- 第一个项目占据较大网格 -->
         <ProjectCard 
           title="SSH Config Manager" 
-          description="一款支持分组可视化的 SSH 连接管理器, 深度集成现代终端模拟器." 
+          description="一款支持分组可视化的 SSH 配置管理器, 深度集成现代终端模拟器." 
           href="/ssh-config-manager-artifact/" 
         />
-        <!-- 第二个项目占位 (当有新项目时启用) -->
-        <!-- <ProjectCard title="另一个项目" description="项目描述" href="/another/" /> -->
+        
+        <!-- ✨ 第二个项目：C++ 文件管理库 (带有 YouTube 演示视频) -->
+        <div class="project-card">
+          <h4>C++ 文件管理库 (带 WebUI)</h4>
+          <p>一个带有 HTTP 接口和 WebUI 界面的 C++ 文件管理库，可用于远程管理机器中的文件（如开发、调试机器人）。</p>
+          <div class="video-wrapper">
+            <iframe 
+              src="https://www.youtube.com/embed/dZEh1HSGWWo?si=BYJqPuKuHf8XUNUv&controls=0" 
+              title="C++ 文件管理器 WebUI 演示" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="strict-origin-when-cross-origin" 
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
       </div>
     </section>
   </main>
