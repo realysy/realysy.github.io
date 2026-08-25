@@ -10,13 +10,12 @@ import Footer from '@/components/Footer.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 ---
 
-<Layout title="realysy 主页 - 项目与文章">
+<Layout lang="zh" title="realysy 主页 - 项目与文章">
   <Header />
   <main>
     <section class="hero">
-      <!-- 无 eyebrow, 无 version 标签, 无 scroll cue -->
       <h1>开发者, 极客.</h1>
-      <p>我开发工具和让生活更便捷的应用. 目前专注于 SSH Config Manager 及相关实用工具.</p>
+      <p>我平时喜欢开发软件和让生活更便捷的应用. 目前正在开发 SSH Config Manager 及相关实用工具.</p>
       <div class="cta-group">
         <a href="#projects" class="primary-btn">查看项目</a>
         <a href="https://github.com/realysy" target="_blank" rel="noopener" class="secondary-btn">GitHub</a>
@@ -30,7 +29,7 @@ import ProjectCard from '@/components/ProjectCard.astro';
         <!-- 第一个项目占据较大网格 -->
         <ProjectCard 
           title="SSH Config Manager" 
-          description="一款支持分组可视化的 SSH 配置管理器, 深度集成现代终端模拟器." 
+          description="一款支持分组可视化的 SSH 配置管理器, 深度集成现代终端模拟器. 你可以下载试用30天, 然后需要购买以获得正式版激活密钥." 
           href="/ssh-config-manager-artifact/" 
         />
         

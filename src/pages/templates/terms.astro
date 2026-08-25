@@ -2,10 +2,16 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { SITE_CONFIG } from '@/utils/config';
+
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 ---
-<Layout title="Terms of Use - realysy" lang="en">
+<Layout 
+  lang="en"
+  title=`Terms of Use - ${SITE_CONFIG.siteName}` 
+  description=`${SITE_CONFIG.siteName}: These Terms of Use govern your use of the website.`
+>
   <div class="page-wrapper">
     <Header />
     <div class="container markdown-content">

@@ -2,16 +2,21 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { SITE_CONFIG } from '@/utils/config';
 
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 ---
 
-<Layout title="使用条款 - realysy" lang="zh">
+<Layout 
+  lang="zh"
+  title=`使用条款 - ${SITE_CONFIG.siteNameCN}` 
+  description=`${SITE_CONFIG.siteNameCN}: 本使用条款约束您对本网站的使用.`
+>
   <div class="page-wrapper">
     <Header />
     <div class="container markdown-content">
-      <h1>使用条款</h1>
+      <h1>使用条款 - realysy 的主页网站</h1>
       <p class="last-updated"><strong>最后更新日期：</strong>2026年8月25日</p>
       
       <p>欢迎来到我的个人作品集。访问本网站即表示您同意以下条款。</p>
