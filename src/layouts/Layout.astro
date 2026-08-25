@@ -37,11 +37,8 @@ const alternateUrl = new URL(isZh ? enPath : zhPath, Astro.site).toString();
 // 生成 x-default 兜底链接
 const xDefaultUrl = new URL(enPath, Astro.site).toString();
 
-// 动态生成完整的 OG 图片 URL
-const ogImageUrl = new URL(image, Astro.site).toString();
-
 // 生成注入前端的 JS 代码片段 - 使用 JSON.stringify 确保路径安全, 后续配合 set:html 避免 HTML 实体转义问题
-const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({ 
+const i18nScript = `window.I18N_PATHS = ${JSON.stringify({ 
   zh: zhPath, 
   en: enPath, 
   current: currentLang 
@@ -73,15 +70,15 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
   <meta property="og:url" content={canonicalUrl} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={ogImageUrl} />
-  
+  {image && <meta property="og:image" content={new URL(image, Astro.site).toString()} />}
+
   <!-- Twitter 分享卡片 -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content={canonicalUrl} />
   <meta property="twitter:title" content={title} />
   <meta property="twitter:description" content={description} />
-  <meta property="twitter:image" content={ogImageUrl} />
-  
+  {image && <meta property="twitter:image" content={new URL(image, Astro.site).toString()} />}
+
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
   <link rel="icon" type="image/x-icon" href={`${baseUrl}favicon.ico`} />
@@ -101,7 +98,7 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
   <!-- 🌍 初次访问时自动检测浏览器语言并重定向 (早期执行, 避免 FOUC) -->
   <script is:inline>
     (function() {
-      const paths = window.SMGR_I18N_PATHS;
+      const paths = window.I18N_PATHS;
       if (!paths) return;
 
       // 🚨 核心 SEO 保护机制：利用爬虫的“无痕模式”特性
@@ -134,9 +131,11 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
 </head>
 
 <body>
-  <!-- slot 标签相当于一个"占位符", 用于接收各个页面传入的具体内容 -->
-  <slot />
-  <script src="@/scripts/main.js"></script>
+  <div class="page-wrapper">
+    <!-- slot 标签相当于一个"占位符", 用于接收各个页面传入的具体内容 -->
+    <slot />
+    <script src="@/scripts/main.js"></script>
+  </div>
 </body>
 
 </html>
