@@ -8,7 +8,9 @@ description: "A Solution to Resolve SWUpdate Status Reporting Problem After Down
 This page introduces my product: Solution to SWUpdate Status Reporting Problem After Download and Installation in SWUpdate+hawkBit OTA? Find it here:
 
 <script src="https://www.creem.io/embed.js" async></script>
-<a href="https://www.creem.io/payment/prod_1AljC0EyskY4HbIbi5M6Tx" data-creem-checkout data-creem-theme="light" style="display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;border:2px solid #151617;background:#FFBE98;color:#151617;box-shadow:0 3px 0 0 #151617;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;line-height:1;cursor:pointer;text-decoration:none"><svg width="15" height="15" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;flex:0 0 auto"><path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="#151617"/></svg><span>Buy with Creem</span></a>
+<div style="display:flex;justify-content:center;margin:20px 0">
+  <a href="https://www.creem.io/payment/prod_1AljC0EyskY4HbIbi5M6Tx" data-creem-checkout data-creem-theme="light" style="display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;border:2px solid #151617;background:#FFBE98;color:#151617;box-shadow:0 3px 0 0 #151617;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;line-height:1;cursor:pointer;text-decoration:none"><svg width="15" height="15" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;flex:0 0 auto"><path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="#151617"/></svg><span>Buy with Creem</span></a>
+</div>
 
 ![hawkBit Status turn to Updated successfully after apply this solution](@/assets/blog_assets/hawkBit-status-change.png)
 
@@ -18,7 +20,7 @@ This product provides a solution to the following problem. I promise that this i
 
 1. After creating a Software module and distribution set on the hawkBit server and Assigning them to the target device Target, the SWUpdate client on the target device successfully received this OTA upgrade signal, downloaded and installed it to the specified location, and successfully executed the postinstall script.
     see image 2.
-   ![hawkBit Status turn to Updated after fix](@/assets/blog_assets/status-pending-update.png)
+   ![hawkBit Status still Pending update after client download and install](@/assets/blog_assets/status-pending-update.png)
 2. But the problem is: ① The server did not receive feedback that the client upgrade was complete, and the hawkBit update progress is still Pending Update, and has not changed to Updated. ② The client SWUpdate repeatedly reports a warning saying pending testing, ignores other updates, and requires restarting SWUpdate to report the test result. The log is as follows:
 
    ```log
@@ -40,9 +42,11 @@ This product provides a solution to the following problem. I promise that this i
 Pay and download the pdf to checkout the cause and corresponding solution to the problem.
 
 <script src="https://www.creem.io/embed.js" async></script>
-<a href="https://www.creem.io/payment/prod_1AljC0EyskY4HbIbi5M6Tx" data-creem-checkout data-creem-theme="light" style="display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;border:2px solid #151617;background:#FFBE98;color:#151617;box-shadow:0 3px 0 0 #151617;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;line-height:1;cursor:pointer;text-decoration:none"><svg width="15" height="15" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;flex:0 0 auto"><path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="#151617"/></svg><span>Buy with Creem</span></a>
+<div style="display:flex;justify-content:center;margin:20px 0">
+  <a href="https://www.creem.io/payment/prod_1AljC0EyskY4HbIbi5M6Tx" data-creem-checkout data-creem-theme="light" style="display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;border:2px solid #151617;background:#FFBE98;color:#151617;box-shadow:0 3px 0 0 #151617;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;line-height:1;cursor:pointer;text-decoration:none"><svg width="15" height="15" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;flex:0 0 auto"><path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="#151617"/></svg><span>Buy with Creem</span></a>
+</div>
 
 
 After the problem resolved, hawkBit server should receive OTA conclusion and turn status into Updated after SWUpdate download and install, see image 3.
 
-![hawkBit Status still Pending update after client download and install](@/assets/blog_assets/status-updated.png)
+![hawkBit Status turn to Updated after fix](@/assets/blog_assets/status-updated.png)

@@ -40,11 +40,11 @@ function getColorIndex(str: string) {
 }
 
 const seoTitle = isZh
-  ? `博客 - ${SITE_CONFIG.appName}`
-  : `Blog - ${SITE_CONFIG.appName}`;
+  ? `博客 - ${SITE_CONFIG.siteNameCN}`
+  : `Blog - ${SITE_CONFIG.siteName}`;
 const seoDesc = isZh
-  ? `探索 ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}) 的最新开发动态, 版本发布日志, 以及终端配置与 SSH 管理的深度实用教程.`
-  : `Explore the latest development updates, release notes, and in-depth tutorials on terminal configuration and SSH management for ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}).`;
+  ? `探索 ${SITE_CONFIG.siteNameCN} 的最新开发动态.`
+  : `Explore the latest development updates in ${SITE_CONFIG.siteName}.`;
 const heading = isZh ? "📝 开发博客" : "📝 Development Blog";
 const emptyText = isZh ? "暂无文章." : "No posts yet.";
 const hrefPrefix = isZh ? "zh/blog/" : "blog/";

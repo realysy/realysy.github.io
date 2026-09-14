@@ -30,12 +30,12 @@ const autoCover = getAutoCover(post.body);
 
 // 根据实际渲染的文章判断语言 (可能是 en 也可能是 zh)
 const lang = post.id.startsWith("zh/") ? "zh" : "en";
-const seoTitle = `${post.data.title} | ${SITE_CONFIG.appName} ${lang === "zh" ? "博客" : "Blog"}`;
+const seoTitle = `${post.data.title} | ${SITE_CONFIG.siteName} ${lang === "zh" ? "博客" : "Blog"}`;
 const seoDesc =
   post.data.description ||
   (lang === "zh"
-    ? `关于 ${SITE_CONFIG.appName} 的最新开发动态和教程。`
-    : `The latest development updates and tutorials about ${SITE_CONFIG.appName}.`);
+    ? `关于 ${SITE_CONFIG.siteNameCN} 的最新开发动态和教程。`
+    : `The latest development updates and tutorials about ${SITE_CONFIG.siteName}.`);
 ---
 
 <Layout title={seoTitle} lang={lang} description={seoDesc} image={autoCover}>
