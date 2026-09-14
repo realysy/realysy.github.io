@@ -87,6 +87,13 @@ body {
   color: #764ba2;
 }
 
+p {
+  margin-bottom: 16px;
+  color: #1f2328;
+  font-size: 16px;
+}
+
+
 /* 通用链接 */
 a {
   color: #0969da;
@@ -278,6 +285,9 @@ a:hover {
 [data-theme="dark"] .page-wrapper {
   background: #161b22;
   box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] p {
+  color: #e6edf3;
 }
 [data-theme="dark"] .hero h2,
 [data-theme="dark"] .hero h1,

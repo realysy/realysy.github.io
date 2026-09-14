@@ -8,6 +8,7 @@ Currently focused on SSH Config Manager and related utilities.
 ## Official Links
 - [GitHub @realysy](https://github.com/realysy/)
 - [Homepage](https://www.mctek.site/)
+- [Blog](https://www.mctek.site/blog/)
 
 ## Projects
 
